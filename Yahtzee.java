@@ -30,7 +30,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private void playGame() {
 		/* You fill this in */
 		
-		already = new ArrayList<Integer>();
+		already = new int[nPlayers][N_CATEGORIES];
 		upperScore = new int[nPlayers];
 		lowerScore = new int[nPlayers];
 		total = new int[nPlayers];
@@ -42,10 +42,10 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 				/* Chance 1 */
 				firstRoll(i);
 				
-				/* Chance 2 */
-				selectAndDice();
-				/* Chance 3 */
-				selectAndDice();
+//				/* Chance 2 */
+//				selectAndDice();
+//				/* Chance 3 */
+//				selectAndDice();
 				
 				/* SelectCategory */
 				selectCategory(i);
@@ -65,9 +65,10 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private void showWinner() {
 		int win = 0;
 		for(int i = 0 ;i < total.length; i++){
-			if ( i == 0 ) break;
-			if( total[i] > total[i-1]) {
-				win = i;
+			if ( i != 0 ) {
+				if( total[i] > total[i-1]) {
+					win = i;
+				}
 			}
 		}
 		
@@ -76,14 +77,14 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	
 	/* display upper score , upper bonus , lowerscore of each player */
 	private void updateOtherScores() {
-		for(int i = 0; i < nPlayers;i++) {
-			display.updateScorecard(7, i, upperScore[i]);
-			if (upperScore[i] >= 63) {
-				display.updateScorecard(8, i, 35);
+		for(int i = 1; i <= nPlayers;i++) {
+			display.updateScorecard(UPPER_SCORE, i, upperScore[i-1]);
+			if (upperScore[i-1] >= 63) {
+				display.updateScorecard(UPPER_BONUS, i, 35);
 			} else {
-				display.updateScorecard(8, i, 0);
+				display.updateScorecard(UPPER_BONUS, i, 0);
 			}
-			display.updateScorecard(16, i, lowerScore[i]);
+			display.updateScorecard(LOWER_SCORE, i, lowerScore[i-1]);
 		}		
 	}
 	
@@ -119,11 +120,9 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		/* must select a different category */
 		while(true) {
 			cateNumber = display.waitForPlayerToSelectCategory();
-			if (!already.contains(cateNumber)) {
-				if (YahtzeeMagicStub.checkCategory(dice, cateNumber)) {
-					already.add(cateNumber);
-					break;
-				}
+			if (already[i-1][cateNumber-1] == 0) {
+				already[i-1][cateNumber-1]++;
+				break;
 			}
 			display.printMessage("Already selected. Pick Another One.");
 		}
@@ -138,29 +137,34 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		total[i-1] += score;
 		/* udpate score broad */
 		display.updateScorecard(cateNumber, i, score);
-		display.updateScorecard(17, i, total[i-1]);
+		display.updateScorecard(TOTAL, i, total[i-1]);
 	}
 	
 
 	/* calculate Score with Category */
 	private int calculateScore(int cate) {
 		int result = 0;
-		switch (cate) {
-		case ONES : result = addAllInt(dice, 1); break;
-		case TWOS : result = addAllInt(dice, 2); break;
-		case THREES : result = addAllInt(dice, 3); break;
-		case FOURS : result = addAllInt(dice, 4); break;
-		case FIVES : result = addAllInt(dice, 5); break;
-		case SIXES : result = addAllInt(dice, 6); break;
-		case THREE_OF_A_KIND : result = sumAll(dice); break;
-		case FOUR_OF_A_KIND : result = sumAll(dice); break;
-		case FULL_HOUSE : result = 25; break;
-		case SMALL_STRAIGHT : result = 30; break;
-		case LARGE_STRATGHT : result = 40; break;
-		case YAHTZEE : result = 50; break;
-		case CHANCE : result = sumAll(dice); break;
-		default : break;
+		if (YahtzeeMagicStub.checkCategory(dice, cateNumber)) {
+			switch (cate) {
+			case ONES : result = addAllInt(dice, 1); break;
+			case TWOS : result = addAllInt(dice, 2); break;
+			case THREES : result = addAllInt(dice, 3); break;
+			case FOURS : result = addAllInt(dice, 4); break;
+			case FIVES : result = addAllInt(dice, 5); break;
+			case SIXES : result = addAllInt(dice, 6); break;
+			case THREE_OF_A_KIND : result = sumAll(dice); break;
+			case FOUR_OF_A_KIND : result = sumAll(dice); break;
+			case FULL_HOUSE : result = 25; break;
+			case SMALL_STRAIGHT : result = 30; break;
+			case LARGE_STRAIGHT : result = 40; break;
+			case YAHTZEE : result = 50; break;
+			case CHANCE : result = sumAll(dice); break;
+			default : break;
+			}
+		} else {
+			result = 0;
 		}
+		
 		return result;
 	}
 	
@@ -195,5 +199,5 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private int[] upperScore;
 	private int[] lowerScore;
 	private int[] total;
-	private ArrayList<Integer> already;
+	private int[][] already;
 }
