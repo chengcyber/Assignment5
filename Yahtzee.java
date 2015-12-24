@@ -11,7 +11,6 @@ import java.util.*;
 
 public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	
-	private static final int LARGE_STRATGHT = 0;
 	public static void main(String[] args) {
 		new Yahtzee().start(args);
 	}
@@ -156,7 +155,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		case FOUR_OF_A_KIND : result = sumAll(dice); break;
 		case FULL_HOUSE : result = 25; break;
 		case SMALL_STRAIGHT : result = 30; break;
-		case LARGE_STRATGHT : result = 40; break;
+		case LARGE_STRAIGHT : result = 40; break;
 		case YAHTZEE : result = 50; break;
 		case CHANCE : result = sumAll(dice); break;
 		default : break;
