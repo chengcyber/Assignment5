@@ -41,10 +41,10 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 				/* Chance 1 */
 				firstRoll(i);
 				
-//				/* Chance 2 */
-//				selectAndDice();
-//				/* Chance 3 */
-//				selectAndDice();
+				/* Chance 2 */
+				selectAndDice();
+				/* Chance 3 */
+				selectAndDice();
 				
 				/* SelectCategory */
 				selectCategory(i);
